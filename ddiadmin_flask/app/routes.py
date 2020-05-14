@@ -1,11 +1,13 @@
 from app import app
 from pymongo import MongoClient
 from flask import request, jsonify
+from flask_bcrypt import Bcrypt
 from werkzeug.http import HTTP_STATUS_CODES
+from app.database.db import initialize_db
 import string
 import json
 
-
+bcrypt = Bcrypt(app)
 @app.route('/')
 @app.route('/index')
 def index():
@@ -21,9 +23,9 @@ def rights():
     if 'record' in request.args:
         record = str(request.args['record'].lower())
     else:
-        status_code = 404
-    # return "Error: No record field provided. Please specify an record."
-        response = jsonify({'error': HTTP_STATUS_CODES.get(status_code, 'Unknown error'),
+        status_code = 400
+        response = jsonify({'status': 'error',
+                            'error': HTTP_STATUS_CODES.get(status_code, 'Unknown object'),
                             'message': 'The requested object ' +
                             record + ' doesn\'t exists'})
         response.status_code = status_code
@@ -31,8 +33,9 @@ def rights():
     if 'type' in request.args:
         recordtype = str(request.args['type'].lower())
     else:
-        status_code = 404
-        response = jsonify({'error': HTTP_STATUS_CODES.get(status_code, 'Unknown error'),
+        status_code = 400
+        response = jsonify({'status': 'error',
+                            'error': HTTP_STATUS_CODES.get(status_code, 'Unknown object'),
                             'message': 'The requested object ' +
                             recordtype + ' doesn\'t exists'})
         response.status_code = status_code
@@ -67,4 +70,6 @@ def rights():
                         dnsobject = ASingleReview["records"][i]
                         print("RECORD: " +
                               str(ASingleReview["records"][i]["rights"][recordtype]))
-    return jsonify({'allowed': adminrights, 'object': dnsobject})
+    return jsonify({'status': 'ok',
+                    'allowed': adminrights,
+                    'object': dnsobject})
