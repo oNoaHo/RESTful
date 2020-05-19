@@ -41,44 +41,33 @@ class UsersApi(Resource):
                              recordtype + ' doesn\'t exists\n' + str(body)},
                             mimetype="application/json",
                             status=status_code)
-        print(record + " " + recordtype)
         if body.get('userid'):
-            user = json.loads(users.objects.get(
-                userid=body.get('userid')).to_json())
-            if "zones" in user.keys():
-                length = len(user["zones"])
-                print("length zones: " + str(length))
-                for i in range(length):
-                    if user["zones"][i]["name"] == record:
+            user = users.objects.get(userid=body.get('userid'))
+            if user.zones:
+                for i in range(len(user.zones)):
+                    if user.zones[i]["name"] == record:
                         objectmessage = "object found"
-                        if user["zones"][i]["rights"][recordtype] == 1:
+                        if user.zones[i]["rights"][recordtype] == 1:
                             rightsmessage = "rights given"
                             adminrights = True
                             dnsobject = user["zones"][i]
-                            print(
-                                "ZONE: " + str(user["zones"][i]["rights"][recordtype]))
+                            print("ZONE: " + str(user.zones[i]["rights"][recordtype]))
             if adminrights == False:
-                if "records" in user.keys():
-                    length = len(user["records"])
-                    print("length records: " + str(length))
-                    for i in range(length):
-                        if user["records"][i]["name"] == record:
+                if user.records:
+                    for i in range(len(user.records)):
+                        if user.records[i]["name"] == record:
                             objectmessage = "object found"
-                            print("RECORD: " +
-                                  str(user["records"][i]["name"]))
-                            if user["records"][i]["rights"][recordtype] == 1:
+                            if user.records[i]["rights"][recordtype] == 1:
                                 rightsmessage = "rights given"
                                 adminrights = True
-                                dnsobject = user["records"][i]
+                                dnsobject = user.records[i]
                                 print("RECORD: " +
                                       str(user["records"][i]["rights"][recordtype]))
             if adminrights == False:
-                if "groups" in user.keys():
-                    length = len(user["groups"])
-                    print("length groups: " + str(length))
-                    for i in range(length):
+                if user.groups:
+                    for i in range(len(user.groups)):
                         group = json.loads(groups.objects.get(
-                            name=user["groups"][i]["name"]).to_json())
+                            name=user.groups[i]["name"]).to_json())
                         if "zones" in group.keys():
                             length = len(group["zones"])
                             print("length gzones: " + str(length))
