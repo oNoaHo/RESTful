@@ -61,40 +61,27 @@ class UsersApi(Resource):
                                 rightsmessage = "rights given"
                                 adminrights = True
                                 dnsobject = user.records[i]
-                                print("RECORD: " +
-                                      str(user["records"][i]["rights"][recordtype]))
             if adminrights == False:
                 if user.groups:
                     for i in range(len(user.groups)):
-                        group = json.loads(groups.objects.get(
-                            name=user.groups[i]["name"]).to_json())
-                        if "zones" in group.keys():
-                            length = len(group["zones"])
-                            print("length gzones: " + str(length))
-                            for i in range(length):
-                                if group["zones"][i]["name"] == record:
+                        group = groups.objects.get(name=user.groups[i]["name"])
+                        if group.zones:
+                            for i in range(len(group.zones)):
+                                if group.zones[i]["name"] == record:
                                     objectmessage = "object found"
-                                    if group["zones"][i]["rights"][recordtype] == 1:
+                                    if group.zones[i]["rights"][recordtype] == 1:
                                         rightsmessage = "rights given"
                                         adminrights = True
-                                        dnsobject = group["zones"][i]
-                                        print(
-                                            "GZONE: " + str(group["zones"][i]["rights"][recordtype]))
+                                        dnsobject = group.zones[i]
                         if adminrights == False:
-                            if "records" in group.keys():
-                                length = len(group["records"])
-                                print("length grecords: " + str(length))
-                                for i in range(length):
-                                    if group["records"][i]["name"] == record:
+                            if group.records:
+                                for i in range(len(group.records)):
+                                    if group.records[i]["name"] == record:
                                         objectmessage = "object found"
-                                        print("GRECORD: " +
-                                              str(group["records"][i]["name"]))
-                                        if group["records"][i]["rights"][recordtype] == 1:
+                                        if group.records[i]["rights"][recordtype] == 1:
                                             rightsmessage = "rights given"
                                             adminrights = True
                                             dnsobject = group["records"][i]
-                                            print("RECORD: " +
-                                                  str(group["records"][i]["rights"][recordtype]))
             return jsonify({'status': 'ok',
                             'allowed': adminrights,
                             'object': dnsobject,
