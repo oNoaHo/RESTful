@@ -72,11 +72,11 @@ errors = {
         "status": 401
     },
     "ExpiredSignatureError": {
-        "message": "Session has expired",
+        "message": "Session expired",
         "status": 401
     },
     "WrongTokenError": {
-        "message": "wrong token given. Please use valid access token",
+        "message": "Wrong token given. Please use valid access token",
         "status": 401
     }
 }
