@@ -30,6 +30,14 @@ class UnauthorizedError(Exception):
     pass
 
 
+class ExpiredSignatureError(Exception):
+    pass
+
+
+class WrongTokenError(Exception):
+    pass
+
+
 errors = {
     "InternalServerError": {
         "message": "Something went wrong",
@@ -61,6 +69,14 @@ errors = {
     },
     "UnauthorizedError": {
         "message": "Invalid username or password",
+        "status": 401
+    },
+    "ExpiredSignatureError": {
+        "message": "Session has expired",
+        "status": 401
+    },
+    "WrongTokenError": {
+        "message": "wrong token given. Please use valid access token",
         "status": 401
     }
 }

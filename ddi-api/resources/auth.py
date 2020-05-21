@@ -33,26 +33,27 @@ class LoginApi(Resource):
             if not authorized:
                 raise UnauthorizedError
 
-            expires = datetime.timedelta(minutes=1)
+            expires = datetime.timedelta(minutes=5)
             refreshexpires = datetime.timedelta(minutes=10)
             access_token = create_access_token(
                 identity=str(apiusers.id), expires_delta=expires, fresh=True)
             refresh_token = create_refresh_token(
                 identity=str(apiusers.id), expires_delta=refreshexpires)
-            return {'access_token': access_token,'refresh_token': refresh_token}, 200
+            return {'access_token': access_token, 'refresh_token': refresh_token}, 200
         except (UnauthorizedError, DoesNotExist):
             raise UnauthorizedError
         except Exception as e:
             raise InternalServerError
 
+
 class TokenRefresh(Resource):
     @jwt_refresh_token_required
     def post(self):
-        # retrive the user's identity from the refresh token using a Flask-JWT-Extended built-in method
         current_user = get_jwt_identity()
-        # return a non-fresh token for the user
-        expires = datetime.timedelta(minutes=1)
+        expires = datetime.timedelta(minutes=5)
         refreshexpires = datetime.timedelta(minutes=10)
-        new_token = create_access_token(identity=current_user, expires_delta=expires, fresh=False)
-        refresh_token = create_refresh_token(identity=current_user, expires_delta=refreshexpires)
-        return {'access_token': new_token,'refresh_token': refresh_token}, 200
+        new_token = create_access_token(
+            identity=current_user, expires_delta=expires, fresh=False)
+        refresh_token = create_refresh_token(
+            identity=current_user, expires_delta=refreshexpires)
+        return {'access_token': new_token, 'refresh_token': refresh_token}, 200
